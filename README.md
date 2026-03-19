@@ -36,4 +36,4 @@ App del clima enfocada en motociclistas. Ingresa tu ciudad y un semáforo te dic
 
 ## Autor
 
-Elias — [@Eliasdev](https://github.com/Eliasdev)
+**Elias Gutierrez** — [github.com/eliasdev](https://github.com/eliasdev)
