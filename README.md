@@ -20,7 +20,7 @@ App del clima enfocada en motociclistas. Ingresa tu ciudad y un semáforo te dic
 
 1. Clona el repo:
 ```bash
-   git clone https://github.com/Eliasdev/moto-weather.git
+git clone https://github.com/eliasgdev/moto-weather.git
 ```
 2. Consigue una API key gratis en [openweathermap.org](https://openweathermap.org/api)
 3. En `js/config.js`, reemplaza la key por la tuya
@@ -36,4 +36,4 @@ App del clima enfocada en motociclistas. Ingresa tu ciudad y un semáforo te dic
 
 ## Autor
 
-**Elias Gutierrez** — [github.com/eliasdev](https://github.com/eliasdev)
+**Elias Gutierrez** — [github.com/eliasgdev](https://github.com/eliasgdev)
