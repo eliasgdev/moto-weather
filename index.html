@@ -2,75 +2,128 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MotoWeather</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src https://api.open-meteo.com https://geocoding-api.open-meteo.com; manifest-src 'self'; base-uri 'none'; form-action 'none'" />
+  <meta name="referrer" content="no-referrer" />
+  <title>MotoWeather · ¿Es buen momento para salir en moto?</title>
+  <meta name="description" content="Clima para motociclistas: semáforo de ahora, las próximas 24 horas, la mejor hora para salir y un planeador de rodadas. Gratis y sin registro." />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content="MotoWeather" />
+  <meta property="og:description" content="¿Es buen momento para salir en moto? Semáforo por hora con lluvia, ráfagas, tormentas y visibilidad." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="icons/icono.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icono-192.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="css/styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script type="module" src="js/app.js"></script>
 </head>
 <body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
 
-  <div class="bg-grid"></div>
-
-  <header>
-    <div class="logo">
-      <span class="logo-icon">🏍️</span>
-      <span class="logo-text">MOTO<span>WEATHER</span></span>
-    </div>
+  <header class="barra">
+    <a class="marca" href="./" aria-label="MotoWeather, inicio">
+      <img src="icons/icono.svg" alt="" width="32" height="32" />
+      <span>MotoWeather</span>
+    </a>
+    <span class="aviso-conexion" id="avisoConexion" hidden></span>
   </header>
 
-  <main>
-    <section class="search-section">
-      <h1 class="headline">¿Es buen día<br/>para salir?</h1>
-      <div class="search-bar">
-        <input type="text" id="cityInput" placeholder="Ingresa tu ciudad..." />
-        <button id="searchBtn">BUSCAR</button>
-      </div>
-      <p class="error-msg" id="errorMsg"></p>
+  <main id="contenido">
+    <section class="portada" aria-labelledby="titulo">
+      <h1 id="titulo">¿Es buen momento para salir en moto?</h1>
+
+      <form class="buscador" id="formBusqueda" role="search" autocomplete="off">
+        <div class="buscador-campo">
+          <label for="entradaLugar">Dónde</label>
+          <input id="entradaLugar" type="text" maxlength="80" placeholder="Busca tu ciudad o municipio"
+                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="listaLugares" />
+          <ul class="sugerencias" id="listaLugares" role="listbox" hidden></ul>
+        </div>
+        <button type="button" class="buscador-ubicacion" id="botonUbicacion">
+          <span id="iconoUbicacion"></span><span class="texto-ubicacion">Mi ubicación</span>
+        </button>
+        <button type="submit" class="buscador-ir" id="botonBuscar" aria-label="Buscar">
+          <span id="iconoBuscar"></span>
+        </button>
+      </form>
+      <p class="mensaje-error" id="mensajeError" role="alert"></p>
+
+      <p class="recientes" id="recientes" hidden>
+        <span class="recientes-titulo">Recientes</span>
+        <span id="listaRecientes"></span>
+        <button type="button" class="enlace tenue" id="borrarRecientes">Borrar</button>
+      </p>
     </section>
 
-    <section class="result-section" id="resultSection">
+    <p class="cargando" id="cargando" hidden aria-live="polite"><span class="giro"></span>Consultando el clima…</p>
 
-      <div class="city-info">
-        <h2 id="cityName">—</h2>
-        <p id="dateTime">—</p>
-      </div>
+    <div class="resultado" id="resultado" hidden>
+      <section class="ahora" aria-labelledby="veredicto">
+        <div class="semaforo" id="semaforo" role="img">
+          <span class="luz rojo"></span><span class="luz amarillo"></span><span class="luz verde"></span>
+        </div>
+        <div class="ahora-texto">
+          <p class="lugar">
+            <span id="nombreLugar"></span>
+            <span class="tenue" id="detalleAhora"></span>
+            <button type="button" class="enlace" id="botonRecargar">Actualizar</button>
+          </p>
+          <h2 class="veredicto" id="veredicto"></h2>
+          <ul class="motivos" id="motivosAhora"></ul>
+        </div>
+      </section>
 
-      <div class="semaforo-container">
-        <div class="semaforo" id="semaforo">
-          <div class="luz rojo" id="luzRojo"></div>
-          <div class="luz amarillo" id="luzAmarillo"></div>
-          <div class="luz verde" id="luzVerde"></div>
-        </div>
-        <div class="semaforo-label" id="semaforoLabel">—</div>
-      </div>
+      <dl class="datos" id="datosAhora"></dl>
 
-      <div class="weather-cards">
-        <div class="card">
-          <span class="card-value" id="temp">—</span>
-          <span class="card-label">Temperatura</span>
-        </div>
-        <div class="card">
-          <span class="card-value" id="humidity">—</span>
-          <span class="card-label">Humedad</span>
-        </div>
-        <div class="card">
-          <span class="card-value" id="wind">—</span>
-          <span class="card-label">Viento</span>
-        </div>
-        <div class="card">
-          <span class="card-value" id="rain">—</span>
-          <span class="card-label">Lluvia</span>
-        </div>
-      </div>
+      <section class="seccion" aria-labelledby="tituloVentana">
+        <h2 id="tituloVentana">Mejor momento para salir</h2>
+        <p class="ventana" id="ventana"></p>
+      </section>
 
-      <div class="advice-box" id="adviceBox">
-        <p id="adviceText">—</p>
-      </div>
+      <section class="seccion" aria-labelledby="tituloHoras">
+        <div class="seccion-cabeza">
+          <h2 id="tituloHoras">Próximas 24 horas</h2>
+          <div class="flechas">
+            <button type="button" class="flecha" id="horasAtras" aria-label="Horas anteriores"></button>
+            <button type="button" class="flecha" id="horasAdelante" aria-label="Horas siguientes"></button>
+          </div>
+        </div>
+        <ol class="horas" id="horas" tabindex="0" aria-label="Pronóstico hora por hora"></ol>
+        <p class="leyenda">
+          <span class="punto verde"></span>Ideal
+          <span class="punto amarillo"></span>Precaución
+          <span class="punto rojo"></span>No salgas
+          <span class="leyenda-lluvia">% = probabilidad de lluvia</span>
+        </p>
+      </section>
 
-    </section>
+      <section class="seccion" aria-labelledby="tituloPlan">
+        <h2 id="tituloPlan">Planea tu rodada</h2>
+        <form class="plan" id="formPlan">
+          <label for="planSalida">Salgo</label>
+          <select id="planSalida"></select>
+          <label for="planDuracion">y ruedo</label>
+          <select id="planDuracion">
+            <option value="1">1 hora</option>
+            <option value="2" selected>2 horas</option>
+            <option value="3">3 horas</option>
+            <option value="4">4 horas</option>
+            <option value="6">6 horas</option>
+            <option value="8">8 horas</option>
+          </select>
+        </form>
+        <div class="plan-resultado" id="planResultado" aria-live="polite"></div>
+      </section>
+    </div>
   </main>
 
-  <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <footer class="pie">
+    <p>Datos del clima de <a href="https://open-meteo.com/" rel="noopener" target="_blank">Open-Meteo.com</a> (CC BY 4.0).
+      El semáforo es una orientación: revisa siempre el estado real de la vía.
+      · <a href="https://github.com/eliasgdev/moto-weather" rel="noopener" target="_blank">Código en GitHub</a></p>
+  </footer>
 </body>
 </html>
