@@ -1,9 +1,9 @@
-# API key - NO subir a GitHub
-js/config.js
-
 # Sistema operativo
 .DS_Store
 Thumbs.db
 
 # Editor
 .vscode/
+.idea/
+
+node_modules/
