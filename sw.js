@@ -1,5 +1,5 @@
 // Service worker: la app abre sin conexión. Subir VERSION cada vez que cambien los archivos.
-const VERSION = 'mw-v2.1.0';
+const VERSION = 'mw-v2.1.1';
 const ARCHIVOS = [
   './', 'index.html', 'css/styles.css', 'manifest.webmanifest',
   'js/app.js', 'js/api.js', 'js/evaluar.js', 'js/iconos.js', 'js/almacen.js',
